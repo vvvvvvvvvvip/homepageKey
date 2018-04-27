@@ -15,6 +15,7 @@
                 <div class="pre" @click="prePlay"></div>
                 <div :class="playJudge ? 'pause': 'play'" @click.stop="judge()"></div>
                 <div class="next" @click="nextPlay"></div>
+                <div class="mode" id="mode" @click="changeModel(true)" :style="{backgroundImage : 'url(' + modeUrl + ')', backgroundSize:imagesize, backgroundPosition:imageposition}"></div>
             </div>
         </div>
     </div>
@@ -135,7 +136,8 @@
         -ms-transform: translateX(-50%);
         -o-transform: translateX(-50%);
         transform: translateX(-50%);
-        bottom: 5px;
+        bottom: 20px;
+        width: 100%;
     }
 
     .controls img:nth-child(2) {
@@ -151,6 +153,13 @@
         height: 105px;
     }
 
+    #mode {
+        margin-left: 20%;
+        width: 25px;
+        height: 25px;
+        margin-bottom: 5px;
+    }
+
     @media screen and (max-width: 768px) {
         .singerPic {
             width: 55px;
@@ -160,6 +169,13 @@
             bottom: 60px;
             top: 0;
             transform: none;
+        }
+        .controls div {
+            width: 30px;
+            height: 30px;
+        }
+        #mode {
+            margin-left: 35px;
         }
     }
 </style>
@@ -173,6 +189,9 @@ export default {
     },
     data (){
         return {
+            modeUrl: 'https://github.com/vvvvvvvvvvip/new/blob/master/image/listPlay.png?raw=true',
+            imagesize: 'cover',
+            imageposition: 'center center'
         }
     },
     methods: {
@@ -187,6 +206,37 @@ export default {
         },
         prePlay (){
             musicApi.nextOrPrePlay(this,false)
+        },
+        AudiEle () {
+  			return store.getters.getAudioEle
+  		},
+        changeModel (isclick){
+            let type = localStorage.getItem('audioPlayType') || store.getters.getAudioPlayType || 1
+  			const audioEle = this.AudiEle()
+  			console.log(audioEle)
+  			// 判断是点击的还是 init的
+  			if (isclick) {
+  				type = type++ >= 3 ? 1 : type
+  			}
+  			console.log(type)
+  			switch (Number.parseInt(type)) {
+  				case 1:
+  					this.modeUrl = 'https://github.com/vvvvvvvvvvip/new/blob/master/image/listPlay.png?raw=true'
+  					audioEle.loop = false
+  					break
+  				case 2:
+  					this.modeUrl = 'https://github.com/vvvvvvvvvvip/new/blob/master/image/repeatPlay.png?raw=true'
+  					audioEle.loop = true
+  					break
+  				case 3:
+  					this.modeUrl = 'https://github.com/vvvvvvvvvvip/new/blob/master/image/randomPlay.png?raw=true'
+  					audioEle.loop = false
+  					break
+  				default:
+  					console.log('haha')
+  					break
+  			}
+            musicApi.setPlayType(type)
         }
     },
     computed: {

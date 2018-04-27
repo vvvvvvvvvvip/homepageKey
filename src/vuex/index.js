@@ -31,7 +31,9 @@ const store = new Vuex.Store({
         //当前的时长
         currentD: 0,
         //当前的音乐时间
-        currentTime: '00:00'
+        currentTime: '00:00',
+        // 播放模式  	1-列表播放   2-单曲循环    3-随机播放
+        playType: 1
     },
     getters: {
         getBingInfo: state => state.bingInfo,
@@ -41,7 +43,8 @@ const store = new Vuex.Store({
         getAudioEle: state  => state.audioEle,
         getAudioIsPlay: state => state.audioIsPlay,
         getCurrentD: state => state.currentD,
-        getCurrentTime: state=> state.currentTime
+        getCurrentTime: state=> state.currentTime,
+        getAudioPlayType: state => state.playType
     },
     mutations: {
         setCurrentD (state, obj) {
@@ -70,6 +73,9 @@ const store = new Vuex.Store({
         },
         setAudioIsPlay (state, obj) {
             state.audioIsPlay = obj
+        },
+        setAudioPlayType (state, obj) {
+            state.playType = obj.data
         }
     },
     modules: {
@@ -99,6 +105,9 @@ const store = new Vuex.Store({
         },
         set_AudioIsPlay ({commit}, obj) {
             commit('setAudioIsPlay', obj)
+        },
+        set_AudioPlayType ({commit}, obj) {
+            commit('setAudioPlayType', obj)
         }
     }
 })

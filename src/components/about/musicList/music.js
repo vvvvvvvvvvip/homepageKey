@@ -5,6 +5,15 @@ import store from '../../../vuex/index'
 import axios from 'axios'
 
 const musicApi = {
+    setPlayType(type){
+        this.typeType = Number.parseInt(type)
+        // 设置本地存储和 store
+        store.dispatch({
+            type: 'set_AudioPlayType',
+            data: this.typeType
+        })
+        localStorage.setItem('audioPlayType', this.typeType)
+    },
     //获取歌单列表
     getMusicSheet(id) {
         const apiUrl = `http://www.daiwei.org/vue/server/music.php?inAjax=1&do=playlist&id=${id}`
@@ -169,17 +178,23 @@ const musicApi = {
         let currentIndex = store.getters.getCurrentAudio.musicIndex || 0
         const length = store.getters.getMusicList.length
         const playMusicList = store.getters.getMusicList
-        if( isNext ){
-            currentIndex++
-            if(currentIndex >= length - 1) {
-                currentIndex = length - 1
+        // 判断是否是随机模式
+        if (this.typeType !== 3) {
+            if( isNext ){
+                currentIndex++
+                if(currentIndex >= length - 1) {
+                    currentIndex = length - 1
+                }
+            }else {
+                currentIndex--
+                if(currentIndex <= 0){
+                    currentIndex = 0
+                }
             }
-        }else {
-            currentIndex--
-            if(currentIndex <= 0){
-                currentIndex = 0
-            }
+        } else {
+            currentIndex = Math.floor(Math.random() * length)
         }
+
         console.log(currentIndex)
         console.log(playMusicList[currentIndex])
         const apiUrl = `http://www.daiwei.org/vue/server/music.php?inAjax=1&do=musicInfo&id=${playMusicList[currentIndex].id}`
