@@ -27,7 +27,7 @@
 # install dependencies
 npm install
 
-# npm install --save vue-resource
+npm install --save vue-resource
 
 # serve with hot reload at localhost:8080
 npm run dev
