@@ -5,6 +5,27 @@ import store from '../../../vuex/index'
 import axios from 'axios'
 
 const musicApi = {
+    parseLrc (lrc) {
+        if (!lrc) return ''
+        const lyrics = lrc.split('\n')
+        let lrcObj = {}
+        for (let i = 0; i < lyrics.length; i++) {
+            // 解码
+            const lyric = decodeURIComponent(lyrics[i])
+            const timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g
+            const timeRegExpArr = lyric.match(timeReg)
+            if (!timeRegExpArr) continue
+            const clause = lyric.replace(timeReg, '')
+            for (let k = 0, h = timeRegExpArr.length; k < h; k++) {
+                const t = timeRegExpArr[k]
+                let min = Number(String(t.match(/\[\d*/i)).slice(1))
+                let sec = Number(String(t.match(/\:\d*/i)).slice(1))
+                const time = min * 60 + sec
+                lrcObj[time] = clause
+            }
+        }
+        return lrcObj
+    },
     setPlayType(type){
         this.typeType = Number.parseInt(type)
         // 设置本地存储和 store
@@ -61,6 +82,8 @@ const musicApi = {
             list: data.list,
             type: data.type
         }
+
+        this.getMusicIrc(newData, that)
         // 设置播放状态
         const ele = store.getters.getAudioEle
         store.commit({
@@ -90,6 +113,48 @@ const musicApi = {
         })
         }, (err) => {
             console.log(err)
+        })
+    },
+    //获取歌词
+    getMusicIrc(data, that) {
+        const ele = store.getters.getAudioEle
+        const apiLyric = `http://www.daiwei.org/vue/server/music.php?inAjax=1&do=lyric&id=${data.id}`
+        console.log(apiLyric)
+        axios.get(apiLyric, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then((res) => {
+            console.log(res)
+            let parseLrc = {}
+            if (res.data.lrc === undefined) {
+                parseLrc = {'0': '纯音乐,请欣赏'}
+            } else {
+                parseLrc = this.parseLrc(res.data.lrc.lyric)
+                this.lyric = this.parseLrc(res.data.lrc.lyric)
+            }
+            const currentMusic = {
+                id: data.id,
+                name: data.name,
+                url: musicApi.replaceUrl(data.url),
+                singer: data.singer,
+                duration: data.duration,
+                picurl: data.picurl,
+                index: data.musicIndex,
+                lyric: parseLrc,
+                lrcContent: store.getters.getAudioLrcContent
+            }
+            store.commit({
+                type: 'setCurrentAudio',
+                data: currentMusic
+            })
+            that.$nextTick(() => {
+                // 设置歌词位置
+                store.commit({
+                    type: 'setAudioLrcIndex',
+                    data: 0
+                })
+            })
         })
     },
     //播放暂停
@@ -226,6 +291,8 @@ const musicApi = {
                 list:  store.getters.getMusicList,
                 type: 'unupdate'
             }
+            this.getMusicIrc(newData, that)
+
             store.dispatch({
                 type: 'set_CurrentAudio',
                 data: newData

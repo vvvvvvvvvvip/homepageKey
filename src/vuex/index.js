@@ -33,7 +33,9 @@ const store = new Vuex.Store({
         //当前的音乐时间
         currentTime: '00:00',
         // 播放模式  	1-列表播放   2-单曲循环    3-随机播放
-        playType: 1
+        playType: 1,
+        // lrc的索引   显示歌词使用
+        lrcIndex: 0,
     },
     getters: {
         getBingInfo: state => state.bingInfo,
@@ -44,9 +46,13 @@ const store = new Vuex.Store({
         getAudioIsPlay: state => state.audioIsPlay,
         getCurrentD: state => state.currentD,
         getCurrentTime: state=> state.currentTime,
-        getAudioPlayType: state => state.playType
+        getAudioPlayType: state => state.playType,
+        getAudioLrcIndex: state => state.lrcIndex
     },
     mutations: {
+        setAudioLrcIndex(state, obj){
+          state.lrcIndex = obj
+        },
         setCurrentD (state, obj) {
           state.currentD = obj
         },
@@ -82,6 +88,9 @@ const store = new Vuex.Store({
         audio: Audio
     },
     actions: {
+        set_AudioLrcIndex ({commit}, obj) {
+          commit('setAudioLrcIndex',obj)
+        },
         set_currentTime ({commit}, obj) {
           commit('setCurrentTime', obj)
         },

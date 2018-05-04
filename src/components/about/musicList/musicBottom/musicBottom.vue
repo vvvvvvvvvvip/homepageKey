@@ -16,6 +16,10 @@
                 <div :class="playJudge ? 'pause': 'play'" @click.stop="judge()"></div>
                 <div class="next" @click="nextPlay"></div>
                 <div class="mode" id="mode" @click="changeModel(true)" :style="{backgroundImage : 'url(' + modeUrl + ')', backgroundSize:imagesize, backgroundPosition:imageposition}"></div>
+                <div id="flag" @click='select(false)'>
+                    {{flag ?'打开歌词':'关闭歌词'}}
+                </div>
+                <!-- true: 显示歌词  false：隐藏歌词-->
             </div>
         </div>
     </div>
@@ -32,6 +36,7 @@
         position: relative;
         width: calc(90% - 110px);
         margin: 0 auto;
+        bottom: -12px;
     }
 
     .duration {
@@ -40,7 +45,7 @@
         position: relative;
         background: hsla(0,0%,100%,.1);
         border-radius: 1px;
-        top: 25px;
+        top: 0;
     }
 
     .progressLine {
@@ -72,7 +77,7 @@
         background-color: red;
         position: absolute;
         left: 0;
-        top: 25px;
+        top: 0;
         z-index: 2;
         cursor: pointer;
     }
@@ -129,15 +134,16 @@
     }
     
     .controls {
-        position: absolute;
         left: 50%;
         -webkit-transform: translateX(-50%);
         -moz-transform: translateX(-50%);
         -ms-transform: translateX(-50%);
         -o-transform: translateX(-50%);
         transform: translateX(-50%);
-        bottom: 20px;
+        bottom: 0;
         width: 100%;
+        position: relative;
+        top: 30px;
     }
 
     .controls img:nth-child(2) {
@@ -157,7 +163,29 @@
         margin-left: 20%;
         width: 25px;
         height: 25px;
-        margin-bottom: 5px;
+        /*margin-bottom: 10px;*/
+        position: absolute;
+        top: 50%;
+        -webkit-transform:  translateY(-50%);
+        -moz-transform:  translateY(-50%);
+        -ms-transform:  translateY(-50%);
+        -o-transform:  translateY(-50%);
+        transform:  translateY(-50%);
+        left: 0;
+        right: 0;
+    }
+
+    #flag {
+        width: auto;
+        right: 30px;
+        position: absolute;
+        top: 50%;
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%);
+        right: 5%;
     }
 
     @media screen and (max-width: 768px) {
@@ -169,9 +197,10 @@
             bottom: 60px;
             top: 0;
             transform: none;
+            display: none;
         }
-        .controls div {
-            width: 30px;
+        #flag {
+            width: auto;
             height: 30px;
         }
         #mode {
@@ -191,10 +220,23 @@ export default {
         return {
             modeUrl: 'https://github.com/vvvvvvvvvvip/new/blob/master/image/listPlay.png?raw=true',
             imagesize: 'cover',
-            imageposition: 'center center'
+            imageposition: 'center center',
+            flag: true
         }
     },
     methods: {
+        select(val) {
+            console.log(this.val)
+            this.val = !this.val
+            this.flag = !this.flag
+            let data = {
+                cityname: this.val
+            };
+            this.$emit('showCityName',data);//select事件触发后，自动触发showCityName事件
+        },
+        lyricIsShow () {
+            this.lyric = !this.lyric
+        },
         judge(){
             musicApi.playPause()
         },

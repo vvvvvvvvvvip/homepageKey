@@ -1,33 +1,65 @@
 <template>
+    <!-- 歌词显示问题传--值-->
     <div class="musicList">
         <div @click="back()">
             <i class="back"></i>
         </div>
-        <div class="title whiteText">
+        <div class="title whiteText"  :class="isShow? 'show':'hide'">
             <div class="centerText">序列</div>
             <div class="leftText">歌曲</div>
             <div class="leftText">歌手</div>
             <div class="leftText album">专辑</div>
             <div class="centerText">时长</div>
         </div>
-        <div class="middle-content">
-            <div class="whiteText musicSheet" v-for="(list, index) in musicList" :key="list.id"  @click="clickPlayList(list.id,list.name,list.al.picUrl,list.ar[0].name, list.dt,index), musicList">
-                <div class="centerText">
-                    <span v-show="getCurrentMusic.id !== list.id">{{ index + 1 }}</span>
-                    <img v-show="getCurrentMusic.id === list.id" src="http://www.daiwei.org/vue/bg/wave.gif" alt="播放中"/>
+        <div class="musicLyric" :class="isHide? 'show':'hide'">
+            <p class="lyricItem"  v-for="(item, key, index) in getMusicLrcLists">{{item}}</p>
+        </div>
+        <div class="middle-content"  :class="isShow? 'show':'hide'">
+            <div class="set">
+                <div class="whiteText musicSheet" v-for="(list, index) in musicList" :key="list.id"  @click="clickPlayList(list.id,list.name,list.al.picUrl,list.ar[0].name, list.dt,index), musicList">
+                    <div class="centerText">
+                        <span v-show="getCurrentMusic.id !== list.id">{{ index + 1 }}</span>
+                        <img v-show="getCurrentMusic.id === list.id" src="http://www.daiwei.org/vue/bg/wave.gif" alt="播放中"/>
+                    </div>
+                    <div class="leftText">{{ list.name }}</div>
+                    <div class="leftText">{{ list.ar[0].name }}</div>
+                    <div class="leftText album">{{ list.al.name }}</div>
+                    <div class="centerText">{{getMusicDurationType(list.dt)}}</div>
                 </div>
-                <div class="leftText">{{ list.name }}</div>
-                <div class="leftText">{{ list.ar[0].name }}</div>
-                <div class="leftText album">{{ list.al.name }}</div>
-                <div class="centerText">{{getMusicDurationType(list.dt)}}</div>
             </div>
         </div>
-        <music-bottom :bufferingP="bufferingP"></music-bottom>
+        <music-bottom @showCityName="updateCity" :bufferingP="bufferingP"></music-bottom>
     </div>
 </template>
 <style scoped>
     /*在这里写css样式*/
+    .show {
+        display: block;
+    }
 
+    .hide {
+        display: none;
+    }
+
+    .musicLyric {
+        color: floralwhite;
+        width: 100%;
+        overflow-y: auto;
+        position: fixed;
+        top: 150px;
+        bottom: 150px;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        -moz-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        -o-transform: translateX(-50%);
+        transform: translateX(-50%);
+        max-width: 1240px;
+        margin: 0 auto;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        -webkit-overflow-scrolling: touch;
+    }
     .title {
         width: 100%;
         max-width: 1240px;
@@ -94,16 +126,16 @@
         color: #ffffff;
     }
 
-    .middle-content::-webkit-scrollbar {/*滚动条整体样式*/
+    .middle-content::-webkit-scrollbar,.musicLyric::-webkit-scrollbar {/*滚动条整体样式*/
         width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
         height: 4px;
     }
-    .middle-content::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    .middle-content::-webkit-scrollbar-thumb,.musicLyric::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
         border-radius: 5px;
         -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
         background: rgba(0,0,0,0.2);
     }
-    .middle-content::-webkit-scrollbar-track {/*滚动条里面轨道*/
+    .middle-content::-webkit-scrollbar-track,.musicLyric::-webkit-scrollbar-track {/*滚动条里面轨道*/
         -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
         border-radius: 0;
         background: rgba(0,0,0,0.1);
@@ -146,6 +178,9 @@
     }
 
     @media screen and (max-width: 768px) {
+        .musicLyric {
+            font-size: 12px;
+        }
         .album {
             display: none!important;
         }
@@ -185,10 +220,19 @@ export default {
     data (){
         return {
             isDrag: false,
-            bufferingP: ''
+            bufferingP: true,
+            isShow: true,
+            isHide: false
         }
     },
     methods: {
+        updateCity(data){//触发子组件城市选择-选择城市的事件
+            console.log(data)
+            this.toCity = !data.cityname;//改变了父组件的值
+            this.isShow = this.toCity
+            this.isHide = !this.toCity
+            console.log('toCity:'+this.toCity)
+        },
         back: function(){
             this.$router.go(-1)
         },
@@ -233,6 +277,10 @@ export default {
   		getCurrentMusic () {
   		    console.log(store)
   			return store.getters.getCurrentAudio
+  		},
+  		getMusicLrcLists () {
+  		    console.log(store)
+  			return store.getters.getCurrentAudio.lyric
   		}
     },
     mounted () {

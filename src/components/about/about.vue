@@ -73,6 +73,21 @@
         -o-transform: translate(-50%,-50%);
         transform: translate(-50%,-50%);
     }
+
+    ul a {
+        width: 100%;
+        display: inline-block;
+        color: #fff;
+        font-size: 18px;
+        height: 35px;
+        line-height: 35px;
+        font-weight: 100;
+    }
+
+    ul a:hover {
+        color: orangered;
+        font-weight: bold;
+    }
 </style>
 <script type="text/javascript-6"> 
 // 这里写逻辑代码
