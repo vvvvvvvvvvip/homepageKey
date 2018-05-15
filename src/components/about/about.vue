@@ -30,13 +30,6 @@
                     </li>
                 </router-link>
 
-                <router-link tag="a" to="/about/joke">
-                    <li>
-                        <i></i>
-                        <span>笑话特辑</span>
-                    </li>
-                </router-link>
-
                 <router-link tag="a" to="/about/contact">
                     <li>
                         <i></i>

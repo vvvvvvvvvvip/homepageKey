@@ -3,10 +3,38 @@
         <div @click="back()">
             <i class="back"></i>
         </div>
-        <div class="middle-content">qwesd</div>
+        <div class="middle-content">
+            <h2 class="whiteText">个人标签</h2>
+            <span class="whiteText tag">前端开发</span>
+            <span class="whiteText tag">王者荣耀</span>
+            <span class="whiteText tag">绝地求生</span>
+            <span class="whiteText tag">95后</span>
+            <span class="whiteText tag">Bootstrap</span>
+            <span class="whiteText tag">努力上进</span>
+            <span class="whiteText tag">有责任心</span>
+            <span class="whiteText tag">直率</span>
+            <h2 class="whiteText">技术标签</h2>
+            <span class="whiteText tag">Javascript</span>
+            <span class="whiteText tag">Jquery</span>
+            <span class="whiteText tag">HTML5/CSS3</span>
+            <span class="whiteText tag">Vuejs</span>
+            <span class="whiteText tag">Bootstrap</span>
+            <span class="whiteText tag">Materialize</span>
+            <span class="whiteText tag">模块化</span>
+        </div>
     </div>
 </template>
 <style scoped>
+    .tag {
+        width: 120px;
+        height: 35px;
+        line-height: 35px;
+        box-shadow: inset 0 0 0 18px hsl(0,0%,35%);
+        border-radius: 999px;
+        border: 5px solid transparent;
+        display: inline-block;
+        margin: 5px;
+    }
     /*在这里写css样式*/
     .middle-content::-webkit-scrollbar {/*滚动条整体样式*/
         width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
@@ -29,7 +57,7 @@
         top: 80px;
         bottom: 50px;
         left: 50%;
-        max-width: 1240px;
+        max-width: 768px;
         width: 100%;
         -webkit-transform: translate3d(-50%,0,0);
         transform: translate3d(-50%,0,0);
